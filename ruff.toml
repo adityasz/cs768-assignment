@@ -1,0 +1,11 @@
+line-length = 90
+
+[lint]
+extend-select = ["E501", "D"]
+
+[lint.pydocstyle]
+convention = "google"
+
+[format]
+preview = true
+docstring-code-format = true

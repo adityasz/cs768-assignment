@@ -1,0 +1,11 @@
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.venv
+.idea
+.zed
+dataset_papers
+dataset_papers.tar.gz
