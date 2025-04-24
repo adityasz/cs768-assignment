@@ -7,5 +7,7 @@ wheels/
 .venv
 .idea
 .zed
+output
+data
 dataset_papers
 dataset_papers.tar.gz

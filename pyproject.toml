@@ -5,7 +5,21 @@ description = "CS 768 Assignment"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "matplotlib>=3.10.1",
     "networkx>=3.4.2",
+    "numpy>=2.2.5",
+    "pyalex>=0.18",
     "pyyaml>=6.0.2",
     "torch>=2.6.0",
+    "tqdm>=4.67.1",
 ]
+
+[build-system]
+requires = ["setuptools>=79.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["cglp"]
+
+[tool.setuptools.package-dir]
+"" = "."
