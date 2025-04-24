@@ -4,7 +4,7 @@
 
 = Build a citation graph
 
-#let filename = "/output/stats.txt"
+#let filename = "/output/stats.json"
 #if "stats" in sys.inputs.keys() {
   filename = "/" + sys.inputs.stats
 }

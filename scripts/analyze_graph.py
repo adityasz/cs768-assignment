@@ -17,7 +17,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--data", type=Path, default="data/dataset.pkl",
                         help="The path to the preprocessed dataset.")
-    parser.add_argument("--stats", type=Path, default="output/stats.txt",
+    parser.add_argument("--stats", type=Path, default="output/stats.json",
                         help="The path to save the statistics to.")
     parser.add_argument("--in-hist", type=Path, default="output/hist_in_deg.svg",
                         help="The path to save the in-degree histogram to.")
