@@ -6,6 +6,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import networkx as nx
+import numpy as np
 from matplotlib.figure import Figure
 
 from cglp.data import Paper, paperId
@@ -22,6 +23,8 @@ def parse_args():
                         help="The path to save the in-degree histogram to.")
     parser.add_argument("--out-hist", type=Path, default="output/hist_out_deg.svg",
                         help="The path to save the out-degree histogram to.")
+    parser.add_argument("--combined-hist", type=Path, default="output/hist_deg.svg",
+                        help="The path to save the combined histogram to.")
     return parser.parse_args()
 
 
@@ -63,18 +66,36 @@ def get_stats(graph: nx.DiGraph) -> Stats:
     )
 
 
-def get_deg_hist( graph: nx.DiGraph) -> list[Figure]:
+def get_deg_hist(graph: nx.DiGraph) -> list[Figure]:
     """Get the in- and out-degree histograms."""
     in_degs: list[int] = [d for n, d in graph.in_degree()]   # type: ignore # pyright/python/networkx issue
     out_degs: list[int] = [d for n, d in graph.out_degree()] # type: ignore # pyright/python/networkx issue
     figures: list[Figure] = []
+    figsize: tuple[float, float] = (6, 3)  # inches
+
+    max_deg: int = max(max(in_degs), max(out_degs))
+    bins = np.arange(0, max_deg + 2)
 
     for label, degs in zip(["In", "Out"], [in_degs, out_degs]):
-        fig, ax = plt.subplots(figsize=(6, 6))
+        fig, ax = plt.subplots(figsize=figsize)
         ax.hist(degs, bins=50)
-        ax.set(xlabel=f"{label}-degree", ylabel="Frequency")
-        ax.set_yscale("log")
+        ax.set(
+            xlabel=f"{label}-degree",
+            ylabel="Frequency",
+            xlim=(bins[0], bins[-1])
+        )
         figures.append(fig)
+
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.hist(in_degs, bins=50, alpha=0.7, label="In-degree")
+    ax.hist(out_degs, bins=50, alpha=0.7, label="Out-degree")
+    ax.set(
+        xlabel="Degree",
+        ylabel="Frequency",
+        xlim=(bins[0], bins[-1])
+    )
+    ax.legend()
+    figures.append(fig)
 
     return figures
 
@@ -89,7 +110,7 @@ def main():
     graph: nx.DiGraph = create_graph(papers)
 
     figures: list[Figure] = get_deg_hist(graph)
-    for fig, path in zip(figures, [args.in_hist, args.out_hist]):
+    for fig, path in zip(figures, [args.in_hist, args.out_hist, args.combined_hist]):
         fig.savefig(path, bbox_inches="tight")
 
     stats: Stats = get_stats(graph)
