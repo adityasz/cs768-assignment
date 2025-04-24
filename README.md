@@ -5,14 +5,16 @@
 This is a standard python project with a `pyproject.toml`. Set up a virtual environment and install the required
 packages.
 
-To reproduce the report:
+To reproduce[^1] the report:
 
 1. `mkdir data`
 2. `curl -o data/dataset.pkl https://www.cse.iitb.ac.in/~adityas/cs768-assignment-dataset` (unsafe)
-3. `python scripts/analyze_graph.py`
+3. For task 1: `python scripts/analyze_graph.py`
+   - json ouptut in `output/stats.json`
+   - plots in `output/hist_*.svg`
 4. TODO: Task 2
 5. [`typst`](https://github.com/typst/typst)`compile report/master.typ --root .`
-   will produce the report at `report/master.pdf`.
+   will generate the report at `report/master.pdf`.
 
 ### Setup
 
@@ -31,9 +33,9 @@ Preprocess the dataset with `uv run scripts/preprocess_data.py`.
 
     options:
       -h, --help           show this help message and exit
-      -d, --data DATA      The path to the assignment dataset (tarball or directory).
-      -o, --output OUTPUT  The path to store the processed dataset.
-      --json JSON          The path to store the processed dataset as json.
+      -d, --data DATA      path to the assignment dataset tarball or directory (default: dataset_papers.tar.gz)
+      -o, --output OUTPUT  path to store the processed dataset (default: data/dataset.pkl)
+      --json JSON          path to store the processed dataset as json (default: data/dataset.json)
     ```
   - The preprocessed dataset is available
     [here](https://www.cse.iitb.ac.in/~adityas/cs768-assignment-dataset.pkl).
@@ -60,17 +62,19 @@ Run `typst compile report/master.typ --root .` to get the report at `report/mast
 
   - If you overrode output paths in the scripts, pass the same flags to the
     compile command by appending `--input flag=value` for each flag. `root` has
-    to be a common parent of all paths.
-  ```console
-  $ typst compile report/master.typ --root /path/to/root                     \
-        --input stats=/path/to/root/a/stats                                  \
-        --input in-hist=/path/to/root/b/in_degree_histogram.[svg|png]        \
-        --input out-hist=/path/to/root/c/out_degree_histogram.[svg|png]      \
-        --input combined-hist=/path/to/root/d/out_degree_histogram.[svg|png] \
-  ```
-  Note that the plots generated on your machine will look ugly unless you use
-  [this](https://github.com/adityasz/.dotfiles/blob/master/.config/matplotlib/matplotlibrc)
-  matplotlibrc and have its fonts installed. (Unfortunately, Typst does not have
-  an up-to-date matplotlib backend, and hence svg files have to be used,
-  resulting in stupid issues. Since Typst is not stable, backends written by the
-  community break on almost every update.)
+    to be a common parent of all paths (and is `.` in the above command since
+    all output is generated in `./output` by default).
+    ```console
+    $ typst compile report/master.typ --root /path/to/root                     \
+          --input stats=/path/to/root/a/stats                                  \
+          --input in-hist=/path/to/root/b/in_degree_histogram.[svg|png]        \
+          --input out-hist=/path/to/root/c/out_degree_histogram.[svg|png]      \
+          --input combined-hist=/path/to/root/d/out_degree_histogram.[svg|png]
+    ```
+
+[^1]: Note that the plots generated on your machine will look ugly unless you use
+[this](https://github.com/adityasz/.dotfiles/blob/master/.config/matplotlib/matplotlibrc)
+matplotlibrc and have its fonts installed. (Unfortunately, Typst does not have
+an up-to-date matplotlib backend, and hence svg files have to be used,
+resulting in stupid issues. Since Typst is not stable, backends written by the
+community break on almost every update.)
