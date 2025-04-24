@@ -1,5 +1,4 @@
-#import "@templates/report:0.1.0": *
-
+#import "template/report/lib.typ": *
 
 #show: body => report(
   title: [CS 768 Assignment],

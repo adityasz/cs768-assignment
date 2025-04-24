@@ -1,4 +1,4 @@
-#import "@templates/report:0.1.0": *
+#import "template/report/lib.typ": *
 #import "@preview/zero:0.3.3": ztable
 
 
