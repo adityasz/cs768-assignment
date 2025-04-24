@@ -6,7 +6,7 @@ import pickle
 import sys
 import tarfile
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from tqdm import tqdm
@@ -23,23 +23,26 @@ arXivId = str
 logger = logging.getLogger()
 
 
+def parse_args():
+    """Parses command line arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--data", type=Path, default="dataset_papers.tar.gz",
+                        help="path to the assignment dataset tarball or directory "
+                             "(default: dataset_papers.tar.gz)")
+    parser.add_argument("-o", "--output", type=Path, default="data/dataset.pkl",
+                        help="path to store the processed dataset "
+                             "(default: data/dataset.pkl)")
+    parser.add_argument("--json", type=Path, default="data/dataset.json",
+                        help="path to store the processed dataset as (human-readable) json "
+                             "(default: data/dataset.json)")
+    return parser.parse_args()
+
+
 class ReferencesNotComplete(Exception):
     """TODO"""
     def __init__(self, value: paperId):
         self.value: paperId = value
         super().__init__(f"References not complete for {value}")
-
-
-def parse_args():
-    """Parses command line arguments."""
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--data", type=Path, default="dataset_papers",
-                        help="The path to the assignment dataset (tarball or directory).")
-    parser.add_argument("-o", "--output", type=Path, default="data/dataset.pkl",
-                        help="The path to store the processed dataset.")
-    parser.add_argument("--json", type=Path, default="data/dataset.json",
-                        help="The path to store the processed dataset as json.")
-    return parser.parse_args()
 
 
 def get_ids_references(
@@ -110,8 +113,8 @@ def main():
     elif os.path.isfile(args.data):
         with tarfile.open(args.data, mode='r') as tar:
             with TemporaryDirectory() as tmpdir:
-                tar.extractall(path=tmpdir)
-                papers = get_papers(Path(tmpdir))
+                tar.extractall(path=tmpdir, filter="data")
+                papers = get_papers(Path(tmpdir)/"dataset_papers")
     else:
         print(f"Error: {args.data} does not exist", file=sys.stderr)
 
