@@ -111,9 +111,11 @@ def main():
 
     figures: list[Figure] = get_deg_hist(graph)
     for fig, path in zip(figures, [args.in_hist, args.out_hist, args.combined_hist]):
+        path.parent.mkdir(parents=True, exist_ok=True)
         fig.savefig(path, bbox_inches="tight")
 
     stats: Stats = get_stats(graph)
+    args.stats.parent.mkdir(parents=True, exist_ok=True)
     with open(args.stats, 'w') as f:
         json.dump(stats.__dict__, f)
 
