@@ -8,6 +8,6 @@ wheels/
 .idea
 .zed
 output
-data
+/data
 dataset_papers
 dataset_papers.tar.gz
