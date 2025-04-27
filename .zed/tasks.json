@@ -1,0 +1,12 @@
+[
+  {
+    "label": "Preprocess dataset",
+    "command": "uv run scripts/preprocess_data.py",
+    "reveal": "no_focus"
+  },
+  {
+    "label": "Task 1",
+    "command": "uv run scripts/analyze_graph.py",
+    "reveal": "no_focus"
+  }
+]

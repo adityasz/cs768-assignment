@@ -6,7 +6,6 @@ wheels/
 *.egg-info
 .venv
 .idea
-.zed
 output
 /data
 dataset_papers
