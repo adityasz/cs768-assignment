@@ -1,6 +1,5 @@
 import argparse
 import json
-import pickle
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -9,29 +8,33 @@ import networkx as nx
 import numpy as np
 from matplotlib.figure import Figure
 
-from cglp.data import Paper, paperId
+from cglp.data import Paper, load_dataset, paperId
 
 
 def parse_args():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--data", type=Path, default="data/dataset.pkl",
-                        help="The path to the preprocessed dataset.")
+    parser.add_argument("-d", "--data", type=Path, default="data/dataset",
+                        help="path to the preprocessed dataset (default: data/dataset).")
     parser.add_argument("--stats", type=Path, default="output/stats.json",
-                        help="The path to save the statistics to.")
+                        help="path to save the statistics to (default: output/stats.json).")
     parser.add_argument("--in-hist", type=Path, default="output/hist_in_deg.svg",
-                        help="The path to save the in-degree histogram to.")
+                        help="path to save the in-degree histogram to "
+                             "(default: output/hist_in_deg.svg).")
     parser.add_argument("--out-hist", type=Path, default="output/hist_out_deg.svg",
-                        help="The path to save the out-degree histogram to.")
+                        help="path to save the out-degree histogram to "
+                             "(default: output/hist_out_deg.svg).")
     parser.add_argument("--combined-hist", type=Path, default="output/hist_deg.svg",
-                        help="The path to save the combined histogram to.")
+                        help="path to save the combined histogram to "
+                             "(default: output/hist_deg.svg).")
     return parser.parse_args()
 
 
 def create_graph(papers: dict[paperId, Paper]) -> nx.DiGraph:
     """Create a directed citation graph.
 
-    An edge (u, v) in the graph indicates that the paper u cites the paper v.
+    For each paper $v$ cited by a paper $u$, there is an edge $(u, v)$
+    in the graph.
     """
     graph = nx.DiGraph()
     for paper_id, paper in papers.items():
@@ -103,9 +106,7 @@ def get_deg_hist(graph: nx.DiGraph) -> list[Figure]:
 def main():
     args = parse_args()
 
-    papers: dict[paperId, Paper] = {}
-    with open(args.data, 'rb') as f:
-        papers = pickle.load(f)
+    papers: dict[paperId, Paper] = load_dataset(args.data)
 
     graph: nx.DiGraph = create_graph(papers)
 
@@ -118,11 +119,6 @@ def main():
     args.stats.parent.mkdir(parents=True, exist_ok=True)
     with open(args.stats, 'w') as f:
         json.dump(stats.__dict__, f)
-
-    # fig, ax = plt.subplots()
-    # pos = nx.spring_layout(graph, seed=42)
-    # nx.draw(graph, pos, with_labels=False, node_size=10, arrowsize=5, ax=ax)
-    # ax.set_title("Citation Graph")
 
 
 if __name__ == "__main__":

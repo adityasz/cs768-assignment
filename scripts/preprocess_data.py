@@ -1,17 +1,15 @@
 import argparse
-import json
 import logging
 import os
-import pickle
 import sys
 import tarfile
 
-from dataclasses import asdict
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from tqdm import tqdm
 
-from cglp.data import Paper
+from cglp.data import Paper, save_dataset
+
 
 NUM_PAPERS: int = 6545
 """TODO: Remove when API call written"""
@@ -29,12 +27,12 @@ def parse_args():
     parser.add_argument("-d", "--data", type=Path, default="dataset_papers.tar.gz",
                         help="path to the assignment dataset tarball or directory "
                              "(default: dataset_papers.tar.gz)")
-    parser.add_argument("-o", "--output", type=Path, default="data/dataset.pkl",
+    parser.add_argument("-o", "--output", type=Path, default="data/dataset",
                         help="path to store the processed dataset "
-                             "(default: data/dataset.pkl)")
-    parser.add_argument("--json", type=Path, default="data/dataset.json",
-                        help="path to store the processed dataset as (human-readable) json "
-                             "(default: data/dataset.json)")
+                             "(default: data/dataset)")
+    parser.add_argument("--json", nargs='?', const=Path("data/dataset.json"),
+                        help="save the dataset as json "
+                             "(the path is optional and defaults to data/dataset.json)")
     return parser.parse_args()
 
 
@@ -50,7 +48,7 @@ def get_ids_references(
 ) -> tuple[dict[arXivId, paperId], dict[paperId, set[paperId]]]:
     """TODO: Make real API call"""
     try:
-        get_ids_references.counter # type: ignore
+        get_ids_references.counter      # type: ignore
     except AttributeError:
         get_ids_references.counter = 0  # type: ignore
     paper_ids: list[paperId] = [
@@ -106,32 +104,21 @@ def main():
     args = parse_args()
     logging.basicConfig()  # TODO
 
-    # Get papers from dataset
     papers: dict[paperId, Paper] = {}
     if os.path.isdir(args.data):
         papers = get_papers(args.data)
-    elif os.path.isfile(args.data):
+    elif tarfile.is_tarfile(args.data):
         with tarfile.open(args.data, mode='r') as tar:
             with TemporaryDirectory() as tmpdir:
                 tar.extractall(path=tmpdir, filter="data")
-                papers = get_papers(Path(tmpdir)/"dataset_papers")
+                papers = get_papers(tmpdir/Path("dataset_papers"))
     else:
-        print(f"Error: {args.data} does not exist", file=sys.stderr)
+        print(f"Error: {args.data} is neither a tarball nor a directory", file=sys.stderr)
 
-    # Store dataset as pickle and json
-    output_path: Path = args.output
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, 'wb') as f:
-        pickle.dump(papers, f)
-    json_path: Path = args.json
-    json_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(json_path, 'w') as f:
-        json.dump({
-            paper_id: {
-                k: list(v) if isinstance(v, set)
-                else v for k, v in asdict(paper).items()
-            } for paper_id, paper in papers.items()
-        }, f, indent=4)
+    if args.json:
+        save_dataset(papers, args.output, args.json)
+    else:
+        save_dataset(papers, args.output)
 
 
 if __name__ == "__main__":
