@@ -10,6 +10,7 @@ dependencies = [
     "numpy>=2.2.5",
     "pyalex>=0.18",
     "pyyaml>=6.0.2",
+    "requests>=2.32.3",
     "torch>=2.6.0",
     "tqdm>=4.67.1",
 ]
