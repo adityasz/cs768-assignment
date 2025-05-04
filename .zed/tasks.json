@@ -1,7 +1,7 @@
 [
   {
     "label": "Preprocess dataset",
-    "command": "uv run scripts/preprocess_data.py --json",
+    "command": "uv run scripts/preprocess_dataset.py --json --log",
     "reveal": "no_focus"
   },
   {
