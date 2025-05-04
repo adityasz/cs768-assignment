@@ -6,7 +6,8 @@ wheels/
 *.egg-info
 .venv
 .idea
-output
+/output
 /data
+/logs
 dataset_papers
 dataset_papers.tar.gz
