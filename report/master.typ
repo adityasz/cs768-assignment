@@ -25,3 +25,4 @@
 }
 
 #include "task1.typ"
+#include "task2.typ"

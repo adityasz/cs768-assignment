@@ -14,8 +14,6 @@ class Paper:
     """The title of the paper."""
     abstract: str
     """The abstract of the paper."""
-    arxiv_id: arXivId
-    """The arXiv ID of the paper."""
     references: set[paperId]
     """The paperIds of the paper's references."""
 
@@ -29,6 +27,5 @@ class Paper:
         return cls(
             title=data['title'],
             abstract=data['abstract'],
-            arxiv_id=data['arxiv_id'],
             references=references
         )
