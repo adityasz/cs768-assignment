@@ -44,25 +44,17 @@
 
 #let in_hist = "/output/hist_in_deg.svg"
 #let out_hist = "/output/hist_out_deg.svg"
-#let combined_hist = "/output/hist_deg.svg"
 #if "in-hist" in sys.inputs.keys() {
   in_hist = "/" + sys.inputs.in-hist
 }
 #if "out-hist" in sys.inputs.keys() {
   out_hist = "/" + sys.inputs.out-hist
 }
-#if "combined-hist" in sys.inputs.keys() {
-  combined_hist = "/" + sys.inputs.combined-hist
-}
 
-#for (filename, type) in (in_hist, out_hist, combined_hist).zip(("in", "out", "combined")) {
+#for (filename, type) in (in_hist, out_hist).zip(("in", "out")) {
   [
     #let caption = [The distribution of the #type\-degree of the nodes in the
                     citation graph.]
-    #if type == "combined" {
-      caption = [The in- and out-degree distributions of the nodes in the
-                 citation graph.]
-    }
     #figure(
       image(filename, width: 6in),
       caption: caption
