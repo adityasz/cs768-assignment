@@ -2,12 +2,12 @@ import gzip
 import json
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from .paper import Paper, paperId
 
 
-def load_dataset(filename: Path) -> dict[paperId, Paper]:
+def load_dataset(filename: Union[str, Path]) -> dict[paperId, Paper]:
     """Load the dataset from a gzipped JSON file."""
     with gzip.open(filename, 'rt') as f:
         data: dict[str, Any] = json.load(f)
@@ -20,7 +20,7 @@ def load_dataset(filename: Path) -> dict[paperId, Paper]:
 def save_dataset(
     papers: dict[paperId, Paper],
     output_path: Path,
-    json_path: Optional[Path] = None
+    json_path: Optional[Union[str, Path]] = None
 ):
     """Save the dataset to a gzipped JSON file.
 
@@ -43,6 +43,8 @@ def save_dataset(
         }, f)
 
     if json_path is not None:
+        if not isinstance(json_path, Path):
+            json_path = Path(json_path)
         json_path.parent.mkdir(parents=True, exist_ok=True)
         with gzip.open(output_path, 'rt') as gz_file:
             with open(json_path, 'w') as json_file:
