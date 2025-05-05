@@ -10,6 +10,7 @@ dependencies = [
     "matplotlib>=3.10.1",
     "networkx>=3.4.2",
     "numpy>=2.2.5",
+    "omegaconf>=2.3.0",
     "pyalex>=0.18",
     "pyyaml>=6.0.2",
     "rapidfuzz>=3.13.0",

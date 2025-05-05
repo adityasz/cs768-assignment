@@ -20,16 +20,21 @@ def main():
     ################################################
     #               YOUR CODE START                #
     ################################################
+
     import torch
     from adapters import AutoAdapterModel
+    from omegaconf import OmegaConf
     from torch.nn.functional import cosine_similarity
     from transformers import AutoTokenizer
+
     from cglp.data import arXivId, load_dataset
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    dataset = load_dataset("data/dataset")
-    embeddings: torch.Tensor = torch.load("data/embeddings")
+    config = OmegaConf.load("config/evaluation.yaml")
+    device = torch.device(config.device if torch.cuda.is_available() else "cpu")
+    dataset = load_dataset(config.dataset)
+    embeddings: torch.Tensor = torch.load(config.embeddings)
+
     idx_to_arxiv_id: dict[int, arXivId] = {id: arxiv_id
                                            for id, arxiv_id in enumerate(sorted(dataset.keys()))}
 
@@ -45,9 +50,6 @@ def main():
     with torch.no_grad():
         output = model(**input)
     embedding = output.last_hidden_state[:, 0, :]
-
-    # prepare a ranked list of papers like this:
-    # result = ['paper1', 'paper2', 'paper3', 'paperK']  # Replace with your actual ranked list
 
     sims = cosine_similarity(embeddings.to(device), embedding.to(device), dim=1)
     result = [idx_to_arxiv_id[idx] for idx in torch.argsort(sims, descending=True).tolist()]
