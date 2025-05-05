@@ -5,6 +5,7 @@ description = "CS 768 Assignment"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "adapters>=1.1.1",
     "bibtexparser>=2.0.0b8",
     "matplotlib>=3.10.1",
     "networkx>=3.4.2",
@@ -15,6 +16,7 @@ dependencies = [
     "requests>=2.32.3",
     "torch>=2.6.0",
     "tqdm>=4.67.1",
+    "transformers>=4.48.3",
 ]
 
 [build-system]

@@ -8,5 +8,10 @@
     "label": "Task 1",
     "command": "uv run scripts/analyze_graph.py",
     "reveal": "no_focus"
+  },
+  {
+    "label": "Generate embeddings",
+    "command": "uv run scripts/generate_embeddings.py",
+    "reveal": "no_focus"
   }
 ]
