@@ -24,5 +24,12 @@
   }
 }
 
+The code for this assignment is available at #url("https://github.com/adityasz/cs768-assignment").
+Detailed instructions for setup and running the scripts, as well as reproducing
+all the results including this report (with all the figures and tables), are
+available in the #link("https://github.com/adityasz/cs768-assignment/tree/master/README.md")[`README`].
+
 #include "task1.typ"
 #include "task2.typ"
+
+#bibliography("refs.bib")
