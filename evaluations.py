@@ -20,13 +20,37 @@ def main():
     ################################################
     #               YOUR CODE START                #
     ################################################
+    import torch
+    from adapters import AutoAdapterModel
+    from torch.nn.functional import cosine_similarity
+    from transformers import AutoTokenizer
+    from cglp.data import arXivId, load_dataset
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+    dataset = load_dataset("data/dataset")
+    embeddings: torch.Tensor = torch.load("data/embeddings")
+    idx_to_arxiv_id: dict[int, arXivId] = {id: arxiv_id
+                                           for id, arxiv_id in enumerate(sorted(dataset.keys()))}
 
+    tokenizer = AutoTokenizer.from_pretrained("allenai/specter2_base")
+    model = AutoAdapterModel.from_pretrained("allenai/specter2_base")
+    model.load_adapter("allenai/specter2", source="hf", load_as="specter2", set_active=True)
+    model = model.to(device)
+
+    input = tokenizer([args.test_paper_title + tokenizer.sep_token + args.test_paper_abstract],
+                      padding=True, truncation=True, return_tensors="pt",
+                      return_token_type_ids=False, max_length=512)
+    input = {k: v.to(device) for k, v in input.items()}
+    with torch.no_grad():
+        output = model(**input)
+    embedding = output.last_hidden_state[:, 0, :]
 
     # prepare a ranked list of papers like this:
-    result = ['paper1', 'paper2', 'paper3', 'paperK']  # Replace with your actual ranked list
+    # result = ['paper1', 'paper2', 'paper3', 'paperK']  # Replace with your actual ranked list
 
+    sims = cosine_similarity(embeddings.to(device), embedding.to(device), dim=1)
+    result = [idx_to_arxiv_id[idx] for idx in torch.argsort(sims, descending=True).tolist()]
 
     ################################################
     #               YOUR CODE END                  #
